@@ -13,8 +13,8 @@ import java.util.ArrayList;
  */
 public class RFAMFilter {
     private String column;
-    private ArrayList<String> contains;
-    private ArrayList<String> equals;
+    private ArrayList<String> contains = new ArrayList<String>();
+    private ArrayList<String> equals = new ArrayList<String>();
     private Integer index = 0;
     
     public RFAMFilter(String column) {
@@ -88,13 +88,15 @@ public class RFAMFilter {
             return value.length();
         }
         
-        boolean match = false;
-        for (String equal: equals) {
-            match = match || value.equals(equal);
-        }
-        
-        if (!match) {
-            return 0;
+        if (equals.size() > 0) {
+            boolean match = false;
+            for (String equal: equals) {
+                match = match || value.equals(equal);
+            }
+
+            if (!match) {
+                return 0;
+            }
         }
         
         int count = 0;

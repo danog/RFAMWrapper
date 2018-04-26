@@ -14,7 +14,7 @@ import java.util.ArrayList;
  */
 public class RFAMColumnFilteredStats implements RFAMColumnStatsInterface {
     private RFAMColumnStats stats;
-    private ArrayList<RFAMFilter> filters;
+    private ArrayList<RFAMFilter> filters = new ArrayList<RFAMFilter>();
 
     public RFAMColumnFilteredStats(RFAMColumnStats stats) {
         this.stats = stats;
@@ -24,9 +24,14 @@ public class RFAMColumnFilteredStats implements RFAMColumnStatsInterface {
         filters.add(filter);
     }
     public int getCharCount() throws SQLException {
-        return stats.getCharCount(filters);
+        return stats.getCharCount(filters.toArray(new RFAMFilter[filters.size()]));
     }
     public double getCharPercentage() throws SQLException {
-        return stats.getCharCount()*100/stats.getCharCount(filters);
+        int total = stats.getCharCount();
+        int partial = this.getCharCount();
+        if (total == 0) {
+            return 100;
+        }
+        return partial*100/total;
     }
 }

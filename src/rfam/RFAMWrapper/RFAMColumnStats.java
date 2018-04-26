@@ -21,17 +21,18 @@ public class RFAMColumnStats implements RFAMColumnStatsInterface {
         this.column = column;
     }
     public int getCharCount() throws SQLException {
-        return getCharCount(new ArrayList<RFAMFilter>());
+        return getCharCount(new RFAMFilter[] { new RFAMFilter() });
     }
-    public int getCharCount(ArrayList<RFAMFilter> filters) throws SQLException {
+    public int getCharCount(RFAMFilter[] filters) throws SQLException {
         int count = 0;
         String value;
-        while ((value = result.getString(column)) != null) {
+        while (result.next()) {
+            value = result.getString(column);
             for (RFAMFilter filter: filters) {
                 count += filter.count(value);
             }
         }
-        result.absolute(0);
+        result.first();
         return count;
     }
 }

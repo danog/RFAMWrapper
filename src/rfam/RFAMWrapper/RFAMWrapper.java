@@ -11,7 +11,7 @@ import java.sql.*;
  * @author daniil
  */
 public class RFAMWrapper implements RFAMWrapperInterface {
-    private final String driver = "com.mysql.jdbc.driver";
+    private final String driver = "com.mysql.jdbc.Driver";
     private final String URL = "jdbc:mysql://mysql-rfam-public.ebi.ac.uk:4497/Rfam";
     private final String username = "rfamro";
     private final String password = "";

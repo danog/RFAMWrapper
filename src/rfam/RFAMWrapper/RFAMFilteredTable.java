@@ -16,7 +16,7 @@ import java.util.ArrayList;
  */
 public class RFAMFilteredTable implements RFAMTableInterface {
     private RFAMTable table;
-    private ArrayList<RFAMFilter> filters;
+    private ArrayList<RFAMFilter> filters = new ArrayList<RFAMFilter>();
     
     public RFAMFilteredTable(RFAMTable table) {
         this.table = table;
