@@ -5,6 +5,7 @@
  */
 package rfam;
 
+import java.sql.ResultSet;
 import rfam.RFAMWrapper.RFAMFilter;
 import rfam.RFAMWrapper.RFAMFilteredTable;
 import rfam.RFAMWrapper.RFAMTable;

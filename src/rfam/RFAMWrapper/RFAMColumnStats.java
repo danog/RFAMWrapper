@@ -14,16 +14,17 @@ import java.util.ArrayList;
  * @author daniil
  */
 public class RFAMColumnStats implements RFAMColumnStatsInterface {
-    private ResultSet result;
+    private RFAMTableInterface table;
     private String column;
     public RFAMColumnStats(RFAMTableStats stats, String column) throws SQLException {
-        this.result = stats.getTable().select(column);
+        this.table = stats.getTable();
         this.column = column;
     }
     public int getCharCount() throws SQLException {
         return getCharCount(new RFAMFilter[] { new RFAMFilter() });
     }
     public int getCharCount(RFAMFilter[] filters) throws SQLException {
+        ResultSet result = this.table.select(this.column);
         int count = 0;
         String value;
         while (result.next()) {
@@ -32,7 +33,7 @@ public class RFAMColumnStats implements RFAMColumnStatsInterface {
                 count += filter.count(value);
             }
         }
-        result.first();
+        result.beforeFirst();
         return count;
     }
 }

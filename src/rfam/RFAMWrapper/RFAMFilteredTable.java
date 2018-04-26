@@ -25,21 +25,23 @@ public class RFAMFilteredTable implements RFAMTableInterface {
     public void applyFilter(RFAMFilter filter) {
         filters.add(filter);
     }
+    @Override
     public ResultSet select(String field) throws SQLException {
         return select(new String[] { field });
     }
+    @Override
     public ResultSet select(String[] fields) throws SQLException {
-        String whereClause = "";
-        for (RFAMFilter filter: filters) {
-            whereClause += filter;
+        String whereClauses[] = new String[filters.size()];
+        for (int index = 0; index < filters.size(); index++) {
+            whereClauses[index] = String.valueOf(filters.get(index));
         }
-        PreparedStatement statement = table.select(fields, whereClause);
-        Integer index = 0;
-        String parameter;
+        PreparedStatement statement = table.select(fields, String.join(" AND ", whereClauses));
+        Integer index = 1;
         for (RFAMFilter filter: filters) {
-            while ((parameter = filter.getNext()) != null) {
-                statement.setString(index++, parameter);
+            while (filter.next()) {
+                statement.setString(index++, filter.getParameter());
             }
+            filter.beforeFirst();
         }
         return statement.executeQuery();
     }

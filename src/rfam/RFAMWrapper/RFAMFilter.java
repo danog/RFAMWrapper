@@ -6,6 +6,7 @@
 package rfam.RFAMWrapper;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  *
@@ -15,7 +16,7 @@ public class RFAMFilter {
     private String column;
     private ArrayList<String> contains = new ArrayList<String>();
     private ArrayList<String> equals = new ArrayList<String>();
-    private Integer index = 0;
+    private Integer index = -1;
     
     public RFAMFilter(String column) {
         this.column = column;
@@ -51,40 +52,34 @@ public class RFAMFilter {
     
     @Override
     public String toString() {
-        String result = "";
-        String and = "";
-        if (equals.size() > 0) {
-            result += column+" IN (";
-            for (String equal: equals) {
-                result += "?, ";
-            }
-            result += ")";
-            if (contains.size() > 0) {
-                and = " AND ";
-            }
+        String result[] = new String[contains.size() + (equals.isEmpty() ? 0 : 1)];
+        if (!equals.isEmpty()) {
+            String in[] = new String[equals.size()];
+            Arrays.fill(in, "?");
+            result[0] = column+" IN ("+String.join(", ", in)+")";
         }
-        for (String match: contains) {
-            result += and+column+" LIKE %?%";
-            and = " AND ";
-        }
-        return result;
+        Arrays.fill(result, equals.isEmpty() ? 0 : 1, result.length, column+" LIKE ?");
+        return String.join(" AND ", result);
     }
-    public String getNext() {
-        if (index < contains.size()) {
-            return contains.get(index++);
+    public void beforeFirst() {
+        index = -1;
+    }
+    public boolean next() {
+        if (++index == equals.size() + contains.size()) {
+            return false;
         }
-        Integer newindex = index - contains.size();
-        if (newindex < equals.size()) {
-            index = 0;
-            return null;
+        return true;
+    }
+    public String getParameter() {
+        if (index < equals.size()) {
+            return equals.get(index);
         }
-        index++;
-        return equals.get(newindex);
+        return '%'+contains.get(index - equals.size())+'%';
     }
     
     
     public int count(String value) {
-        if (contains.size() == 0 && equals.size() == 0) {
+        if (contains.isEmpty() && equals.isEmpty()) {
             return value.length();
         }
         
